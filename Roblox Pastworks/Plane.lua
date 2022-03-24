@@ -5,7 +5,7 @@
 -- // LocalScript | Belongs to StarterCharacterScripts //
 local plr = game.Players.LocalPlayer
 local char = plr.Character
-local PlaneSeat = workspace.DaPlane.PlaneKit.Plane.MainParts.MainSeat -- SET THIS TO THE PLANE'S DRIVER SEAT
+local PlaneSeat = nil -- SET THIS TO THE PLANE'S DRIVER SEAT
 local mouse = plr:GetMouse()
 local UIS = game:GetService("UserInputService")
 local cam = workspace.CurrentCamera
