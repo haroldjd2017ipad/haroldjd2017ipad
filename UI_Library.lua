@@ -6,6 +6,21 @@ local RenderSteppedFunctions = {}
 local LockedProperties = {}
 local TempUnlockedProperties = {}
 
+local Mouse = game.Players.LocalPlayer:GetMouse()
+
+local function GetGuiPositionFromMouse(UI)
+	local pos = {X = 0, Y = 0}
+	
+	for i,v in pairs({"X","Y"}) do
+		local startpos = UI.Parent.AbsolutePosition[v]
+		local endpos = (startpos + UI.Parent.AbsoluteSize[v])
+		
+		pos[v] = math.clamp((Mouse[v]-startpos)/(endpos-startpos),0,1)
+	end
+	
+	return UDim2.new(pos.X, 0, pos.Y, 0)
+end
+
 local function PropertyChanged(object, func) -- parameters passed: Propery, OldValue, newValue
 	local properties = {}
 	local value, tempunlocked, ok
@@ -84,7 +99,7 @@ module.new = function(name)
 	local TabButtons = Instance.new("ScrollingFrame")
 	local Tabs = Instance.new("Folder")
 
-	Base.Name = "Base"; Base.Parent = game.Players.LocalPlayer.PlayerGui; Base.ZIndexBehavior = Enum.ZIndexBehavior.Sibling	
+	Base.Name = "Base"; Base.Parent = game.CoreGui; Base.ZIndexBehavior = Enum.ZIndexBehavior.Sibling	
 	Main.Name = "Main"; Main.Parent = Base; Main.BackgroundColor3 = Color3.fromRGB(33, 33, 33); Main.Position = UDim2.new(0.298019797, 0, 0.316363633, 0); Main.Size = UDim2.new(0, 407, 0, 244)
 	UICorner.Parent = Main
 	Frame.Parent = Main; Frame.BackgroundColor3 = Color3.fromRGB(65, 65, 65); Frame.BorderSizePixel = 0; Frame.Position = UDim2.new(0.295000017, 0, 0.109999985, 0); Frame.Size = UDim2.new(0, 1, 0, 217); Frame.ZIndex = 2
@@ -278,16 +293,40 @@ module.new = function(name)
 		Items.Button = function(label)
 			local Button = Instance.new("TextButton")
 			local UICorner = Instance.new("UICorner",Button)
+			local EffectContainer = Instance.new("ScrollingFrame",Button)
 
-			Button.Name = "Button"; Button.Parent = Tab; Button.BackgroundColor3 = Color3.fromRGB(25, 25, 25); Button.Size = UDim2.new(0, 265, 0, 21); Button.Font = Enum.Font.Cartoon; Button.Text = label; Button.TextColor3 = Color3.fromRGB(255, 255, 255); Button.TextSize = 14.000; Button.TextWrapped = true
-
+			Button.Name = "Button"; Button.Parent = Tab; Button.BackgroundColor3 = Color3.fromRGB(25, 25, 25); Button.Size = UDim2.new(0, 265, 0, 21); Button.Font = Enum.Font.Cartoon; Button.Text = label; Button.TextColor3 = Color3.fromRGB(255, 255, 255); Button.TextSize = 14.000; Button.TextWrapped = true; Button.AutoButtonColor = false
+			EffectContainer.Size = UDim2.new(1,0,1,0); EffectContainer.BackgroundTransparency = 1; EffectContainer.CanvasSize = UDim2.new(0,0,0,0)
+			
 			local btn = {
 				Label = label,
 				Parent = tab,
 				ClassName = "Button"
 			}
-
-			btn.Clicked = Button.MouseButton1Click
+			
+			for i,v in pairs({"MouseButton1Click","MouseButton1Down","MouseButton1Up","MouseButton2Click","MouseButton2Down","MouseButton2Up"}) do
+				btn[v] = Button[v]
+			end
+			
+			Button.MouseButton1Click:Connect(function()
+				local Effect = Instance.new("Frame", EffectContainer)
+				local UICorner = Instance.new("UICorner", Effect)
+				
+				UICorner.CornerRadius = UDim.new(1,0)
+				Effect.AnchorPoint = Vector2.new(.5,.5); Effect.Position = GetGuiPositionFromMouse(Effect); Effect.BackgroundTransparency = .5; Effect.Size = UDim2.new(0,0,0,0)
+				TweenService:Create(Effect, TweenInfo.new(1), {BackgroundTransparency = 1, Size = UDim2.new(0, 100, 0, 100)}):Play()
+				
+				wait(1)
+				Effect:Destroy()
+			end)
+			
+			Button.MouseEnter:Connect(function()
+				Button.BackgroundColor3 = Color3.fromRGB(27.5, 27.5, 27.5)
+			end)
+			
+			Button.MouseLeave:Connect(function()
+				Button.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+			end)
 
 			function btn:Delete()
 				self = nil
@@ -481,6 +520,64 @@ module.new = function(name)
 			end)
 			
 			return slider
+		end
+		
+		Items.TextBox = function(label, PlaceholderText)
+			local TextBox = Instance.new("Frame")
+			local UICorner = Instance.new("UICorner")
+			local Label = Instance.new("TextLabel")
+			local TextBox_2 = Instance.new("TextBox")
+			local UICorner_2 = Instance.new("UICorner")
+
+			TextBox.Name = "TextBox"; TextBox.Parent = Tab; TextBox.BackgroundColor3 = Color3.fromRGB(25, 25, 25); TextBox.Size = UDim2.new(0, 265, 0, 24)
+			UICorner.Parent = TextBox
+			Label.Name = "Label"; Label.Parent = TextBox; Label.AnchorPoint = Vector2.new(0, 0.5); Label.BackgroundColor3 = Color3.fromRGB(255, 255, 255); Label.BackgroundTransparency = 1.000; Label.Position = UDim2.new(0.0716981143, 0, 0.5, 0); Label.Size = UDim2.new(0, 118, 0, 15); Label.Font = Enum.Font.Cartoon; Label.Text = label; Label.TextColor3 = Color3.fromRGB(255, 255, 255); Label.TextScaled = true; Label.TextSize = 14.000; Label.TextWrapped = true; Label.TextXAlignment = Enum.TextXAlignment.Left
+			TextBox_2.Parent = TextBox; TextBox_2.AnchorPoint = Vector2.new(0, 0.5); TextBox_2.BackgroundColor3 = Color3.fromRGB(58, 58, 58); TextBox_2.BorderSizePixel = 0; TextBox_2.Position = UDim2.new(0.516981125, 0, 0.5, 0); TextBox_2.Size = UDim2.new(0, 117, 0, 15); TextBox_2.Font = Enum.Font.Cartoon; TextBox_2.Text = ""; TextBox_2.TextColor3 = Color3.fromRGB(255, 255, 255); TextBox_2.TextScaled = true; TextBox_2.TextSize = 14.000; TextBox_2.TextWrapped = true; TextBox_2.PlaceholderText = PlaceholderText or ""
+			UICorner_2.Parent = TextBox_2
+			------------------------
+			
+			local textbox = {
+				ClassName = "TextBox",
+				Parent = tab,
+				Label = "",
+				PlaceholderText = (PlaceholderText or "")
+			}
+			
+			textbox.EnterKeyPressed = {}
+			textbox.TextChanged = TextBox_2:GetPropertyChangedSignal("Text")
+			
+			for i,v in pairs({"Focused", "FocusLost"}) do
+				textbox[v] = TextBox_2[v]
+			end
+			
+			function textbox:Delete()
+				TextBox:Destroy()
+				textbox = nil
+			end
+			
+			function textbox.EnterKeyPressed:Connect(func)
+				table.insert(textbox.EnterKeyPressed, 1, func)
+			end
+			
+			TextBox_2.InputBegan:Connect(function(input)
+				if input.KeyCode == Enum.KeyCode.Return then
+					for i,v in pairs(textbox.EnterKeyPressed) do
+						if i ~= "Connect" then
+							v()
+						end
+					end
+				end
+			end)
+			
+			PropertyChanged(textbox, function(property)
+				if property == "Label" then
+					Label.Text = textbox.Label
+				elseif property == "PlaceholderText" then
+					TextBox_2.PlaceholderText = textbox.PlaceholderText
+				end
+			end)
+			
+			return textbox
 		end
 		
 		function tab:AddItem(item,arg1,arg2,arg3,arg4,arg5)
