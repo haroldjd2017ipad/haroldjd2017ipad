@@ -100,7 +100,7 @@ module.new = function(name)
 	local Tabs = Instance.new("Folder")
 
 	Base.Name = "Base"; Base.Parent = game.CoreGui; Base.ZIndexBehavior = Enum.ZIndexBehavior.Sibling	
-	Main.Name = "Main"; Main.Parent = Base; Main.BackgroundColor3 = Color3.fromRGB(33, 33, 33); Main.Position = UDim2.new(0.298019797, 0, 0.316363633, 0); Main.Size = UDim2.new(0, 407, 0, 244)
+	Main.Name = "Main"; Main.Parent = Base; Main.BackgroundColor3 = Color3.fromRGB(33, 33, 33); Main.Position = UDim2.new(0.298019797, 0, 0.316363633, 0); Main.Size = UDim2.new(0, 407, 0, 244); Main.Active = true; Main.Draggable = true
 	UICorner.Parent = Main
 	Frame.Parent = Main; Frame.BackgroundColor3 = Color3.fromRGB(65, 65, 65); Frame.BorderSizePixel = 0; Frame.Position = UDim2.new(0.295000017, 0, 0.109999985, 0); Frame.Size = UDim2.new(0, 1, 0, 217); Frame.ZIndex = 2
 	UIAspectRatioConstraint.Parent = Main; UIAspectRatioConstraint.AspectRatio = 1.668
