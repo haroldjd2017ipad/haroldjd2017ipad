@@ -108,7 +108,7 @@ module.new = function(name)
 	-- haroldjd2017ipad text
 	TextLabel.Parent = Frame_2; TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255); TextLabel.BackgroundTransparency = 1.000; TextLabel.Position = UDim2.new(0, 0, 0.185185179, 0); TextLabel.Size = UDim2.new(0, 121, 0, 16); TextLabel.Font = Enum.Font.SourceSans; TextLabel.Text = "haroldjd2017ipad"; TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255); TextLabel.TextScaled = true; TextLabel.TextSize = 14.000; TextLabel.TextWrapped = true
 	Title.Name = "Title"; Title.Parent = Main; Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255); Title.BackgroundTransparency = 1.000; Title.Position = UDim2.new(0.363636374, 0, 0, 0); Title.Size = UDim2.new(0, 110, 0, 19); Title.Font = Enum.Font.FredokaOne; Title.Text = "MM2 Hecks"; Title.TextColor3 = Color3.fromRGB(255, 255, 255); Title.TextScaled = true; Title.TextSize = 14.000; Title.TextWrapped = true
-	TabButtons.Name = "TabButtons"; TabButtons.Parent = Main; TabButtons.Active = true; TabButtons.BackgroundColor3 = Color3.fromRGB(255, 255, 255); TabButtons.BackgroundTransparency = 1.000; TabButtons.Position = UDim2.new(0, 0, 0.27868852, 0); TabButtons.Size = UDim2.new(0, 120, 0, 176); TabButtons.CanvasSize = UDim2.new(0, 0, 0, 0); TabButtons.AutomaticCanvasSize = Enum.AutomaticSize.Y
+	TabButtons.Name = "TabButtons"; TabButtons.Parent = Main; TabButtons.Active = true; TabButtons.BackgroundColor3 = Color3.fromRGB(255, 255, 255); TabButtons.BackgroundTransparency = 1.000; TabButtons.Position = UDim2.new(0, 0, 0.27868852, 0); TabButtons.Size = UDim2.new(0, 120, 0, 176); TabButtons.CanvasSize = UDim2.new(0, 0, 0, 0); TabButtons.AutomaticCanvasSize = Enum.AutomaticSize.Y; TabButtons.ScrollBarThickness = 0
 
 	Tabs.Name = "Tabs"
 	Tabs.Parent = Main
@@ -269,7 +269,7 @@ module.new = function(name)
 				if property == "Enabled" then
 					for i,v in pairs(toggle.Toggled) do
 						if i ~= "Connect" then
-							v()
+							coroutine.resume(coroutine.create(v))
 						end
 					end
 
@@ -295,7 +295,7 @@ module.new = function(name)
 			local UICorner = Instance.new("UICorner",Button)
 			local EffectContainer = Instance.new("ScrollingFrame",Button)
 
-			Button.Name = "Button"; Button.Parent = Tab; Button.BackgroundColor3 = Color3.fromRGB(25, 25, 25); Button.Size = UDim2.new(0, 265, 0, 21); Button.Font = Enum.Font.Cartoon; Button.Text = label; Button.TextColor3 = Color3.fromRGB(255, 255, 255); Button.TextSize = 14.000; Button.TextWrapped = true; Button.AutoButtonColor = false
+			Button.Name = "Button"; Button.Parent = Tab; Button.BackgroundColor3 = Color3.fromRGB(25, 25, 25); Button.Size = UDim2.new(0, 265, 0, 24); Button.Font = Enum.Font.Cartoon; Button.Text = label; Button.TextColor3 = Color3.fromRGB(255, 255, 255); Button.TextSize = 14.000; Button.TextWrapped = true; Button.AutoButtonColor = false
 			EffectContainer.Size = UDim2.new(1,0,1,0); EffectContainer.BackgroundTransparency = 1; EffectContainer.CanvasSize = UDim2.new(0,0,0,0)
 			
 			local btn = {
@@ -396,7 +396,7 @@ module.new = function(name)
 				if property == "SelectedItem" then
 					for i,v in pairs(dropdown.SelectedItemChanged) do
 						if i ~= "Connect" then
-							v()
+							coroutine.resume(coroutine.create(v))
 						end
 					end
 					
@@ -465,7 +465,7 @@ module.new = function(name)
 			local slider = {
 				ClassName = "Slider",
 				Parent = tab,
-				Value = (DefaultValue and DefaultValue or 0),
+				Value = 0,
 				MinValue = (MinValue and MinValue or 0),
 				MaxValue = (MaxValue and MaxValue or 0)
 			}
@@ -496,6 +496,8 @@ module.new = function(name)
 			end)
 			
 			table.insert(RenderSteppedFunctions, 1, function()
+				startpos = Track.AbsolutePosition.X
+				
 				if holding then
 					mousepos =  game.Players.LocalPlayer:GetMouse().X
 					progress = math.clamp((mousepos-startpos)/((startpos + Track.AbsoluteSize.X)-startpos), 0, 1)*100 -- with + operator is endpos
@@ -519,6 +521,8 @@ module.new = function(name)
 				end
 			end)
 			
+			slider.Value = DefaultValue or 0
+			
 			return slider
 		end
 		
@@ -540,6 +544,7 @@ module.new = function(name)
 				ClassName = "TextBox",
 				Parent = tab,
 				Label = "",
+				Text = "",
 				PlaceholderText = (PlaceholderText or "")
 			}
 			
@@ -567,6 +572,10 @@ module.new = function(name)
 						end
 					end
 				end
+			end)
+			
+			textbox.TextChanged:Connect(function()
+				textbox.Text = TextBox_2.Text
 			end)
 			
 			PropertyChanged(textbox, function(property)
