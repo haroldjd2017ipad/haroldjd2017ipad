@@ -6,4 +6,4 @@ Lua is the first programming language that i have learned.
 💞️ I'm looking to collaborate on a roblox development team and i'm looking for scripter jobs
 📫 You can reach me on discord haroldjd2017ipad#2311
 
-📝 Roblox Portfolio: https://sites.google.com/view/haroldportfolio/home
+📝 Roblox Portfolio: https://haroldjd2017ipad.github.io/portfolio
